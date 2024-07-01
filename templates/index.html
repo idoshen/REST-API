@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Management</title>
+</head>
+<body>
+    <h1>User Management</h1>
+
+    <h2>Add User</h2>
+    <form id="userInsert">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+
+        <button type="submit">Add User</button>
+    </form>
+
+    <h2>Delete User</h2>
+    <form id="userDelete">
+        <label for="userId">User ID:</label>
+        <input type="text" id="userId" name="userId" required>
+
+        <button type="submit">Delete User</button>
+    </form>
+
+    <h2>Request User Data</h2>
+    <form id="userDataForm">
+        <label for="userId">User ID:</label>
+        <input type="text" id="userId" name="userId" required>
+
+        <button type="submit">Request User Data</button>
+    </form>
+    <h2>User Data:</h2>
+    <p id="userData"></p>
+
+    <script>
+        document.querySelector('#userDataForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            console.log(formData.get('userId'));
+            const response = await fetch('/users/' + formData.get('userId'));
+            const data = await response.json();
+            document.querySelector('#userData').innerText = JSON.stringify(data);
+        });
+
+        document.querySelector('#userInsert').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            console.log(formData.get('name'));
+            const response = userInsert(formData.get('name'), formData.get('email'));
+            const data = await response.json();
+            console.log(data);
+        });
+
+        function userInsert(name, email) {
+            fetch('/users', {
+                method: 'POST',
+                body: JSON.stringify({name, email}),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => console.log(data));
+        }
+    </script>
+    </body>
+</html>
